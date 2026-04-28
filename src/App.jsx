@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 const seasonProfiles = {
   'True Spring': { family: 'spring', description: 'Warm, radiant, and naturally clear — your best colours are fresh and sunlit.' },
@@ -136,13 +136,6 @@ const hardcodedShadeMap = {
 
 const seasonReference = `The 12 seasons and characteristics:\n- True Spring: warm hue, medium value, clear chroma\n- Light Spring: warm hue, light value, clear chroma\n- Bright Spring: warm-neutral hue, medium value, very clear chroma\n- True Summer: cool hue, medium value, soft chroma\n- Light Summer: cool hue, light value, soft chroma\n- Soft Summer: cool-neutral hue, medium value, very soft chroma\n- True Autumn: warm hue, medium value, muted chroma\n- Deep Autumn: warm hue, deep value, muted chroma\n- Soft Autumn: warm-neutral hue, medium value, very muted chroma\n- True Winter: cool hue, medium value, clear chroma\n- Deep Winter: cool hue, deep value, clear chroma\n- Bright Winter: cool-neutral hue, medium value, very clear chroma`;
 
-const productMeta = {
-  foundation: { label: 'Foundation', decoClass: 'foundation-bottle' },
-  lip: { label: 'Lip Colour', decoClass: 'lipstick' },
-  eyeshadow: { label: 'Eyeshadow', decoClass: 'eyeshadow-palette' },
-  blush: { label: 'Blush', decoClass: 'blush-compact' },
-};
-
 function stripMarkdownFences(text) {
   return text.replace(/```json\s*/gi, '').replace(/```/g, '').trim();
 }
@@ -258,7 +251,18 @@ function App() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [introDone, setIntroDone] = useState(false);
   const inputRef = useRef(null);
+  const scene2Ref = useRef(null);
+  const scene3Ref = useRef(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIntroDone(true);
+      scene2Ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const products = useMemo(() => {
     if (!result?.season?.name) return null;
@@ -296,11 +300,6 @@ function App() {
     onFileSelect(event.target.files?.[0]);
   };
 
-  const handleDrop = (event) => {
-    event.preventDefault();
-    onFileSelect(event.dataTransfer.files?.[0]);
-  };
-
   const handleAnalyze = async () => {
     if (!selectedFile) {
       setError('Please upload a selfie before running analysis.');
@@ -325,6 +324,9 @@ function App() {
           description: aiResult.season.description || profile.description,
         },
       });
+      setTimeout(() => {
+        scene3Ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 350);
     } catch (err) {
       setError(err.message || 'Something went wrong while analysing your photo.');
     } finally {
@@ -338,75 +340,111 @@ function App() {
     setResult(null);
     setError('');
     setLoading(false);
+    scene2Ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   return (
-    <main className="bag-scene">
-      <section className="makeup-bag">
-        <input ref={inputRef} id="selfie-input" type="file" accept="image/*" onChange={handleInputChange} hidden />
-        <header className="bag-title">
-          <p>L’Oréal Paris Atelier</p>
-          <h1>Seasonal Mirror</h1>
-        </header>
-
-        <section className="mirror-stage">
-          <button
-            className={`mirror-frame ${result ? 'revealed' : ''}`}
-            type="button"
-            onDrop={handleDrop}
-            onDragOver={(event) => event.preventDefault()}
-            onClick={() => inputRef.current?.click()}
-          >
-            <span className="mirror-rim" />
-            <span className={`mirror-glass ${previewUrl ? 'has-image' : ''}`}>
-              {!previewUrl && (
-                <span className="mirror-placeholder">
-                  <span className="glint" />
-                  Hold up to mirror
-                </span>
-              )}
-              {previewUrl && <img src={previewUrl} alt="Selected selfie preview" className="mirror-photo" />}
-              {result?.season?.name && <strong className="season-name">{result.season.name}</strong>}
-            </span>
-          </button>
-          <p className="mirror-note">Tap mirror to upload or drag your selfie over the glass.</p>
-
-          {result?.season && (
-            <div className="season-tags">
-              <span>{result.season.hue}</span>
-              <span>{result.season.value}</span>
-              <span>{result.season.chroma}</span>
-            </div>
-          )}
-
-          {result?.season?.description && <p className="season-description">{result.season.description}</p>}
-        </section>
-
-        <section className={`vanity-items ${products ? 'show' : ''}`}>
-          {products && Object.entries(products).map(([key, item]) => (
-            <article className={`makeup-item ${productMeta[key]?.decoClass || ''}`} key={key}>
-              <div className="item-color" style={{ '--swatch': item.hex }} />
-              <div className="item-tag">
-                <p>{productMeta[key]?.label || key}</p>
-                <h3>{item.product}</h3>
-                <span>{item.shade}</span>
-              </div>
-              <div className="item-tip">
-                <strong>{item.hex}</strong>
-                <p>{item.reason}</p>
-              </div>
-            </article>
+    <main className={`cinematic-app ${introDone ? 'intro-done' : ''}`}>
+      <section className="scene scene-title">
+        <div className="sparkles" aria-hidden="true">
+          {Array.from({ length: 30 }).map((_, idx) => (
+            <span key={`sparkle-${idx}`} style={{ '--i': idx }} />
           ))}
-        </section>
+        </div>
+        <h1>Colour Analysis</h1>
+      </section>
 
-        {error && <p className="error">{error}</p>}
+      <section className="scene scene-vanity" ref={scene2Ref}>
+        <div className="wall-art" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+        </div>
 
-        <footer className="bag-controls">
-          <button className="reveal-btn" onClick={handleAnalyze} disabled={loading} type="button">
-            {loading ? 'Revealing...' : 'Reveal My Season'}
+        <div className="vanity-mirror-shell">
+          <div className="vanity-bulbs" aria-hidden="true">
+            {Array.from({ length: 12 }).map((_, idx) => (
+              <span key={`bulb-${idx}`} style={{ '--bulb': idx }} />
+            ))}
+          </div>
+
+          <button className="vanity-mirror" onClick={() => inputRef.current?.click()} type="button">
+            {!previewUrl && <p className="mirror-copy">Show us your light</p>}
+            {previewUrl && <img src={previewUrl} alt="Selfie preview" className="mirror-photo" />}
+            {result?.season?.name && <p className="mirror-season">{result.season.name}</p>}
           </button>
-          <button className="reset-btn" onClick={resetAll} type="button">Start Fresh</button>
-        </footer>
+
+          <input ref={inputRef} id="selfie-input" type="file" accept="image/*" onChange={handleInputChange} hidden />
+
+          <div className="perfume perfume-left" aria-hidden="true" />
+          <div className="perfume perfume-right" aria-hidden="true" />
+        </div>
+
+        <div className="vanity-table" aria-hidden="true">
+          <div className="drawer" />
+          <div className="drawer" />
+          <div className="drawer" />
+        </div>
+        <div className="velvet-stool" aria-hidden="true" />
+
+        {previewUrl && (
+          <button className="reveal-button" type="button" onClick={handleAnalyze} disabled={loading}>
+            {loading ? 'Revealing…' : 'Reveal My Season'}
+          </button>
+        )}
+
+        {error && <p className="error-message">{error}</p>}
+      </section>
+
+      <section className="scene scene-bag" ref={scene3Ref}>
+        <div className="bag-case">
+          <div className="bag-lid">
+            <div className="brush-holder" aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </div>
+          </div>
+
+          <div className={`bag-base ${products ? 'ready' : ''}`}>
+            <article className="product-block palette" style={{ '--shade': products?.eyeshadow?.hex || '#866455', '--delay': '0s' }}>
+              <h3>Eyeshadow Palette</h3>
+              <p>{products?.eyeshadow?.product || 'Awaiting analysis'}</p>
+              <span>{products?.eyeshadow?.shade || '—'}</span>
+            </article>
+
+            <article className="product-block blush" style={{ '--shade': products?.blush?.hex || '#d29596', '--delay': '0.2s' }}>
+              <h3>Blush Compact</h3>
+              <p>{products?.blush?.product || 'Awaiting analysis'}</p>
+              <span>{products?.blush?.shade || '—'}</span>
+            </article>
+
+            <article className="product-block lipstick" style={{ '--shade': products?.lip?.hex || '#aa4f5f', '--delay': '0.4s' }}>
+              <h3>Lipstick</h3>
+              <p>{products?.lip?.product || 'Awaiting analysis'}</p>
+              <span>{products?.lip?.shade || '—'}</span>
+            </article>
+
+            <article className="product-block foundation" style={{ '--shade': products?.foundation?.hex || '#c9a27f', '--delay': '0.6s' }}>
+              <h3>Foundation</h3>
+              <p>{products?.foundation?.product || 'Awaiting analysis'}</p>
+              <span>{products?.foundation?.shade || '—'}</span>
+            </article>
+
+            <aside className="season-card" style={{ '--delay': '0.8s' }}>
+              <h2>{result?.season?.name || 'Your Season'}</h2>
+              <div className="season-pills">
+                <span>{result?.season?.hue || 'hue'}</span>
+                <span>{result?.season?.value || 'value'}</span>
+                <span>{result?.season?.chroma || 'chroma'}</span>
+              </div>
+              <p>{result?.season?.description || 'Upload a selfie and reveal your personalised seasonal profile.'}</p>
+            </aside>
+          </div>
+        </div>
+
+        <p className="worth-it">Because You’re Worth It</p>
+        <button className="reset-button" type="button" onClick={resetAll}>Start Over</button>
       </section>
     </main>
   );
