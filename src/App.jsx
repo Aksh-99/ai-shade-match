@@ -154,9 +154,9 @@ function fileToBase64(file) {
 }
 
 async function analyzeSelfie(file) {
-  const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
   if (!apiKey) {
-    throw new Error('Missing VITE_OPENAI_API_KEY. Add it to your environment before analysing.');
+    throw new Error('Missing VITE_GEMINI_API_KEY. Add it to your environment before analysing.');
   }
 
   const base64 = await fileToBase64(file);
@@ -200,7 +200,7 @@ Task:
 
 Use the provided image only. Do not include markdown, comments, or extra text.`;
 
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
