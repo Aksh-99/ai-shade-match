@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 
 const seasonProfiles = {
   'True Spring': { family: 'spring', description: 'Warm, radiant, and naturally clear — your best colours are fresh and sunlit.' },
@@ -136,6 +136,13 @@ const hardcodedShadeMap = {
 
 const seasonReference = `The 12 seasons and characteristics:\n- True Spring: warm hue, medium value, clear chroma\n- Light Spring: warm hue, light value, clear chroma\n- Bright Spring: warm-neutral hue, medium value, very clear chroma\n- True Summer: cool hue, medium value, soft chroma\n- Light Summer: cool hue, light value, soft chroma\n- Soft Summer: cool-neutral hue, medium value, very soft chroma\n- True Autumn: warm hue, medium value, muted chroma\n- Deep Autumn: warm hue, deep value, muted chroma\n- Soft Autumn: warm-neutral hue, medium value, very muted chroma\n- True Winter: cool hue, medium value, clear chroma\n- Deep Winter: cool hue, deep value, clear chroma\n- Bright Winter: cool-neutral hue, medium value, very clear chroma`;
 
+const productMeta = {
+  foundation: { label: 'Foundation', decoClass: 'foundation-bottle' },
+  lip: { label: 'Lip Colour', decoClass: 'lipstick' },
+  eyeshadow: { label: 'Eyeshadow', decoClass: 'eyeshadow-palette' },
+  blush: { label: 'Blush', decoClass: 'blush-compact' },
+};
+
 function stripMarkdownFences(text) {
   return text.replace(/```json\s*/gi, '').replace(/```/g, '').trim();
 }
@@ -251,6 +258,7 @@ function App() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const inputRef = useRef(null);
 
   const products = useMemo(() => {
     if (!result?.season?.name) return null;
@@ -333,68 +341,72 @@ function App() {
   };
 
   return (
-    <main className="app-shell">
-      <section className="panel">
-        <p className="eyebrow">L’Oréal Paris</p>
-        <h1>L’Oréal AI Shade Match</h1>
-        <p className="intro">
-          Upload a selfie for AI-powered seasonal colour analysis and personalised L’Oréal Paris shade guidance.
-        </p>
+    <main className="bag-scene">
+      <section className="makeup-bag">
+        <input ref={inputRef} id="selfie-input" type="file" accept="image/*" onChange={handleInputChange} hidden />
+        <header className="bag-title">
+          <p>L’Oréal Paris Atelier</p>
+          <h1>Seasonal Mirror</h1>
+        </header>
 
-        {!result && (
-          <>
-            <div
-              className="drop-zone"
-              onDrop={handleDrop}
-              onDragOver={(event) => event.preventDefault()}
-              onClick={() => document.getElementById('selfie-input')?.click()}
-            >
-              <input id="selfie-input" type="file" accept="image/*" onChange={handleInputChange} hidden />
-              <p>Drag & drop your selfie here</p>
-              <span>or click to browse</span>
+        <section className="mirror-stage">
+          <button
+            className={`mirror-frame ${result ? 'revealed' : ''}`}
+            type="button"
+            onDrop={handleDrop}
+            onDragOver={(event) => event.preventDefault()}
+            onClick={() => inputRef.current?.click()}
+          >
+            <span className="mirror-rim" />
+            <span className={`mirror-glass ${previewUrl ? 'has-image' : ''}`}>
+              {!previewUrl && (
+                <span className="mirror-placeholder">
+                  <span className="glint" />
+                  Hold up to mirror
+                </span>
+              )}
+              {previewUrl && <img src={previewUrl} alt="Selected selfie preview" className="mirror-photo" />}
+              {result?.season?.name && <strong className="season-name">{result.season.name}</strong>}
+            </span>
+          </button>
+          <p className="mirror-note">Tap mirror to upload or drag your selfie over the glass.</p>
+
+          {result?.season && (
+            <div className="season-tags">
+              <span>{result.season.hue}</span>
+              <span>{result.season.value}</span>
+              <span>{result.season.chroma}</span>
             </div>
-            <p className="intro">Designed to work across all skin tones, ethnicities, and ages.</p>
+          )}
 
-            {previewUrl && <img className="preview" src={previewUrl} alt="Selected selfie preview" />}
+          {result?.season?.description && <p className="season-description">{result.season.description}</p>}
+        </section>
 
-            <button className="primary-btn" onClick={handleAnalyze} disabled={loading}>
-              {loading ? 'Analysing...' : 'Analyse My Colour Season'}
-            </button>
-          </>
-        )}
-
-        {loading && <div className="spinner" aria-label="Analysing image" />}
+        <section className={`vanity-items ${products ? 'show' : ''}`}>
+          {products && Object.entries(products).map(([key, item]) => (
+            <article className={`makeup-item ${productMeta[key]?.decoClass || ''}`} key={key}>
+              <div className="item-color" style={{ '--swatch': item.hex }} />
+              <div className="item-tag">
+                <p>{productMeta[key]?.label || key}</p>
+                <h3>{item.product}</h3>
+                <span>{item.shade}</span>
+              </div>
+              <div className="item-tip">
+                <strong>{item.hex}</strong>
+                <p>{item.reason}</p>
+              </div>
+            </article>
+          ))}
+        </section>
 
         {error && <p className="error">{error}</p>}
 
-        {result && products && (
-          <section className="results">
-            <div className="season-head">
-              <h2>{result.season.name}</h2>
-              <div className="pills">
-                <span>{result.season.hue}</span>
-                <span>{result.season.value}</span>
-                <span>{result.season.chroma}</span>
-              </div>
-              <p>{result.season.description}</p>
-            </div>
-
-            <div className="cards">
-              {Object.entries(products).map(([key, item]) => (
-                <article className="card" key={key}>
-                  <div className="swatch" style={{ backgroundColor: item.hex }} />
-                  <h3>{key}</h3>
-                  <p className="product">{item.product}</p>
-                  <p className="shade">{item.shade}</p>
-                  <p className="reason">{item.reason}</p>
-                  <code>{item.hex}</code>
-                </article>
-              ))}
-            </div>
-
-            <button className="secondary-btn" onClick={resetAll}>Try Another Photo</button>
-          </section>
-        )}
+        <footer className="bag-controls">
+          <button className="reveal-btn" onClick={handleAnalyze} disabled={loading} type="button">
+            {loading ? 'Revealing...' : 'Reveal My Season'}
+          </button>
+          <button className="reset-btn" onClick={resetAll} type="button">Start Fresh</button>
+        </footer>
       </section>
     </main>
   );

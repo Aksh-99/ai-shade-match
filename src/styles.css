@@ -1,12 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,500;1,700&family=Raleway:wght@400;500;600;700&display=swap');
+
 :root {
-  color-scheme: dark;
-  --bg: #050505;
-  --panel: #0f0f0f;
-  --gold: #d4af37;
-  --gold-soft: #a18122;
-  --text: #f5f3ef;
-  --muted: #bdb6a2;
-  --border: #272114;
+  --bag-base: #1a0810;
+  --bag-shadow: #0d0308;
+  --bag-stitch: #3a1b2a;
+  --gold: #c9a96e;
+  --gold-soft: #8d6b37;
+  --cream: #f5f0e8;
+  --loreal-red: #e2001a;
+  --paper: #f9f4ed;
 }
 
 * {
@@ -16,198 +18,490 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: radial-gradient(circle at top, #1a1408 0%, var(--bg) 40%);
-  color: var(--text);
-  font-family: 'Montserrat', system-ui, sans-serif;
+  font-family: 'Raleway', system-ui, sans-serif;
+  color: var(--cream);
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255, 221, 175, 0.08), transparent 30%),
+    radial-gradient(circle at 85% 25%, rgba(229, 14, 49, 0.06), transparent 38%),
+    radial-gradient(circle at 30% 90%, rgba(255, 224, 165, 0.08), transparent 42%),
+    linear-gradient(160deg, #0b0507, #1a0810 55%, #11060c);
 }
 
-.app-shell {
-  display: flex;
-  justify-content: center;
-  padding: 3rem 1rem;
-}
-
-.panel {
-  width: min(980px, 100%);
-  background: linear-gradient(170deg, #141414, #090909);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 2rem;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
-}
-
-.eyebrow {
-  text-transform: uppercase;
-  letter-spacing: 0.3em;
-  color: var(--gold);
-  margin: 0;
-  font-size: 0.7rem;
-}
-
-h1,
-h2,
-h3 {
-  font-family: 'Cormorant Garamond', serif;
-  margin: 0;
-}
-
-h1 {
-  font-size: clamp(2rem, 5vw, 3.2rem);
-  margin-top: 0.5rem;
-}
-
-.intro {
-  color: var(--muted);
-  max-width: 70ch;
-}
-
-.drop-zone {
-  margin-top: 1.5rem;
-  border: 1px dashed var(--gold-soft);
-  border-radius: 16px;
-  min-height: 180px;
+.bag-scene {
+  min-height: 100vh;
+  padding: clamp(1rem, 3vw, 2rem);
   display: grid;
   place-items: center;
-  text-align: center;
-  cursor: pointer;
-  background: rgba(212, 175, 55, 0.03);
 }
 
-.drop-zone p {
+.makeup-bag {
+  width: min(1100px, 100%);
+  min-height: min(840px, 94vh);
+  position: relative;
+  border-radius: 3rem;
+  padding: clamp(1.2rem, 3vw, 2rem);
+  background:
+    linear-gradient(130deg, rgba(255, 255, 255, 0.03), transparent 60%),
+    repeating-linear-gradient(95deg, rgba(255, 255, 255, 0.02) 0 3px, transparent 3px 9px),
+    radial-gradient(circle at 50% 40%, #2a101b, var(--bag-base) 65%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 207, 145, 0.18),
+    inset 0 0 120px rgba(0, 0, 0, 0.5),
+    0 30px 65px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+
+.makeup-bag::before {
+  content: '';
+  position: absolute;
+  inset: 0.8rem;
+  border-radius: 2.4rem;
+  border: 1px dashed var(--bag-stitch);
+  pointer-events: none;
+}
+
+.bag-title {
+  position: absolute;
+  top: 1.25rem;
+  left: 2rem;
+  z-index: 5;
+}
+
+.bag-title p {
   margin: 0;
-  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  color: rgba(245, 240, 232, 0.72);
 }
 
-.drop-zone span {
-  color: var(--muted);
-  font-size: 0.9rem;
+.bag-title h1 {
+  margin: 0.35rem 0 0;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: clamp(1.45rem, 3vw, 2.35rem);
+  color: var(--cream);
 }
 
-.preview {
-  width: 220px;
-  height: 220px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin: 1.25rem auto 0;
-  display: block;
-  border: 3px solid var(--gold-soft);
+.mirror-stage {
+  width: min(460px, 70vw);
+  margin: 4rem auto 0;
+  text-align: center;
+  position: relative;
+  z-index: 4;
 }
 
-.primary-btn,
-.secondary-btn {
-  margin-top: 1.4rem;
+.mirror-frame {
   border: none;
-  border-radius: 999px;
-  padding: 0.8rem 1.4rem;
-  font-weight: 600;
+  background: transparent;
+  width: 100%;
+  aspect-ratio: 0.8;
   cursor: pointer;
+  position: relative;
+  padding: 0;
+  border-radius: 50%;
 }
 
-.primary-btn {
-  background: var(--gold);
-  color: #111;
+.mirror-rim {
+  position: absolute;
+  inset: 0;
+  border-radius: 50% / 56% 56% 44% 44%;
+  background: linear-gradient(135deg, #f3dca2, #c9a96e 38%, #8e6a33 65%, #f4dd9f);
+  box-shadow:
+    0 0 0 5px rgba(31, 14, 19, 0.55),
+    0 0 30px rgba(224, 170, 78, 0.35);
+  animation: rimShine 3.8s linear infinite;
 }
 
-.primary-btn:disabled {
+@keyframes rimShine {
+  0% { filter: brightness(0.95); }
+  50% { filter: brightness(1.08); }
+  100% { filter: brightness(0.95); }
+}
+
+.mirror-glass {
+  position: absolute;
+  inset: 7.5%;
+  border-radius: 50% / 56% 56% 44% 44%;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.05) 35%, rgba(30, 16, 22, 0.6) 85%),
+    linear-gradient(170deg, rgba(255, 255, 255, 0.08), rgba(70, 35, 52, 0.45));
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  color: var(--cream);
+}
+
+.mirror-glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(243, 243, 243, 0.28);
+  opacity: 0;
+  transform: scale(1.08);
+}
+
+.mirror-frame.revealed .mirror-glass::after {
+  animation: mirrorFog 1.6s ease;
+}
+
+@keyframes mirrorFog {
+  0% { opacity: 0.62; }
+  100% { opacity: 0; }
+}
+
+.mirror-placeholder {
+  display: grid;
+  gap: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: clamp(0.75rem, 2vw, 0.94rem);
+  font-weight: 600;
+}
+
+.glint {
+  width: 68px;
+  height: 2px;
+  margin: 0 auto;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95), transparent);
+  animation: shimmer 1.9s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%,
+  100% { transform: translateX(-18px); opacity: 0.32; }
+  50% { transform: translateX(18px); opacity: 1; }
+}
+
+.mirror-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.season-name {
+  position: absolute;
+  top: 0.8rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: clamp(1.3rem, 3vw, 2rem);
+  color: #fff5da;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.65);
+}
+
+.mirror-note {
+  margin: 0.7rem 0 0;
+  color: rgba(245, 240, 232, 0.82);
+  font-size: 0.87rem;
+}
+
+.season-tags {
+  margin-top: 0.95rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.65rem;
+}
+
+.season-tags span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--paper);
+  color: #4d1f2d;
+  border-radius: 0.8rem;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.78rem;
+  text-transform: capitalize;
+  transform: rotate(calc(var(--r, 0) * 1deg));
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.28);
+}
+
+.season-tags span:nth-child(1) { --r: -5; }
+.season-tags span:nth-child(2) { --r: 2; }
+.season-tags span:nth-child(3) { --r: 6; }
+
+.season-description {
+  margin: 0.9rem auto 0;
+  width: min(470px, 92%);
+  color: rgba(245, 240, 232, 0.85);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.vanity-items {
+  position: absolute;
+  inset: 1.2rem;
+  pointer-events: none;
+}
+
+.makeup-item {
+  position: absolute;
+  width: 220px;
+  pointer-events: auto;
+  transition: transform 0.3s ease;
+}
+
+.makeup-item:hover {
+  transform: translateY(-6px) scale(1.01);
+}
+
+.item-color {
+  position: relative;
+  background: var(--swatch);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.42);
+}
+
+.foundation-bottle {
+  left: 4%;
+  bottom: 20%;
+  transform: rotate(-11deg);
+}
+
+.foundation-bottle .item-color {
+  width: 74px;
+  height: 132px;
+  border-radius: 15px 15px 18px 18px;
+  margin-left: 1.15rem;
+}
+
+.foundation-bottle .item-color::before {
+  content: '';
+  position: absolute;
+  top: -26px;
+  left: 20%;
+  width: 45px;
+  height: 32px;
+  border-radius: 10px 10px 2px 2px;
+  background: linear-gradient(180deg, #ececf0, #9ea4ad);
+}
+
+.lipstick {
+  right: 6%;
+  bottom: 18%;
+}
+
+.lipstick .item-color {
+  width: 36px;
+  height: 144px;
+  border-radius: 15px 15px 3px 3px;
+  margin-left: 1.9rem;
+  background: linear-gradient(to bottom, var(--swatch) 0 40%, #111 40% 100%);
+}
+
+.lipstick .item-color::before {
+  content: '';
+  position: absolute;
+  top: -28px;
+  left: 2px;
+  border-left: 16px solid transparent;
+  border-right: 16px solid transparent;
+  border-bottom: 30px solid var(--swatch);
+}
+
+.eyeshadow-palette {
+  right: 5%;
+  top: 13%;
+  transform: rotate(8deg);
+}
+
+.eyeshadow-palette .item-color {
+  width: 150px;
+  height: 108px;
+  border-radius: 12px;
+  margin-left: 0.35rem;
+  background:
+    linear-gradient(#1f1a1d, #0a090b),
+    var(--swatch);
+}
+
+.eyeshadow-palette .item-color::before {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  border-radius: 8px;
+  background:
+    repeating-linear-gradient(90deg,
+      rgba(255, 255, 255, 0.14) 0 16px,
+      transparent 16px 24px);
+}
+
+.blush-compact {
+  left: 7%;
+  top: 14%;
+  transform: rotate(-9deg);
+}
+
+.blush-compact .item-color {
+  width: 120px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  margin-left: 0.8rem;
+  border: 8px solid #d8d6d4;
+}
+
+.item-tag {
+  margin-top: 0.55rem;
+  background: var(--paper);
+  color: #402330;
+  border-radius: 0.7rem;
+  padding: 0.5rem 0.65rem;
+  box-shadow: 0 8px 14px rgba(0, 0, 0, 0.35);
+  font-size: 0.78rem;
+}
+
+.item-tag p {
+  margin: 0;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+.item-tag h3 {
+  margin: 0.35rem 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.item-tag span {
+  font-style: italic;
+}
+
+.item-tip {
+  position: absolute;
+  left: 95%;
+  top: -8px;
+  width: 220px;
+  opacity: 0;
+  pointer-events: none;
+  background: rgba(23, 9, 15, 0.95);
+  border: 1px solid rgba(245, 240, 232, 0.24);
+  border-radius: 0.65rem;
+  padding: 0.6rem 0.7rem;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.4);
+  transition: opacity 0.25s ease;
+}
+
+.makeup-item:hover .item-tip {
+  opacity: 1;
+}
+
+.item-tip strong {
+  color: #ffe3aa;
+  font-size: 0.75rem;
+}
+
+.item-tip p {
+  margin: 0.35rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.error {
+  text-align: center;
+  color: #ff9eab;
+  margin: 1rem 0 0;
+  position: relative;
+  z-index: 5;
+}
+
+.bag-controls {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 0.8rem;
+  align-items: center;
+  position: absolute;
+  bottom: 1.4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+}
+
+.reveal-btn,
+.reset-btn {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.reveal-btn {
+  padding: 0.85rem 1.4rem;
+  min-width: 186px;
+  border-radius: 999px;
+  background: linear-gradient(170deg, #ff2d43, var(--loreal-red));
+  color: #fff5f7;
+  border: 2px solid var(--gold);
+  box-shadow: 0 10px 20px rgba(226, 0, 26, 0.35);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.reveal-btn:disabled {
   opacity: 0.7;
   cursor: wait;
 }
 
-.secondary-btn {
-  background: transparent;
-  border: 1px solid var(--gold-soft);
-  color: var(--text);
-}
-
-.spinner {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: 3px solid #2f2f2f;
-  border-top-color: var(--gold);
-  animation: spin 0.8s linear infinite;
-  margin: 1.5rem auto;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.error {
-  color: #ff7070;
-}
-
-.results {
-  margin-top: 1.5rem;
-}
-
-.season-head h2 {
-  font-size: clamp(2.1rem, 5vw, 3rem);
-  color: var(--gold);
-}
-
-.pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  margin: 0.7rem 0;
-}
-
-.pills span {
-  border: 1px solid var(--gold-soft);
+.reset-btn {
+  padding: 0.7rem 1.1rem;
   border-radius: 999px;
-  padding: 0.25rem 0.8rem;
-  font-size: 0.85rem;
-  text-transform: capitalize;
+  background: rgba(245, 240, 232, 0.12);
+  color: var(--cream);
+  border: 1px solid rgba(245, 240, 232, 0.35);
 }
 
-.season-head p {
-  color: var(--muted);
-  max-width: 72ch;
-}
+@media (max-width: 900px) {
+  .makeup-bag {
+    min-height: 920px;
+  }
 
-.cards {
-  margin-top: 1.4rem;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  gap: 1rem;
-}
+  .mirror-stage {
+    width: min(430px, 88vw);
+    margin-top: 4.5rem;
+  }
 
-.card {
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 1rem;
-  background: #111;
-}
+  .vanity-items {
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.9rem;
+    margin-top: 1.2rem;
+    padding: 0.6rem;
+  }
 
-.swatch {
-  width: 100%;
-  height: 66px;
-  border-radius: 10px;
-  border: 1px solid #3a3120;
-  margin-bottom: 0.7rem;
-}
+  .makeup-item,
+  .foundation-bottle,
+  .lipstick,
+  .eyeshadow-palette,
+  .blush-compact {
+    position: relative;
+    left: auto;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    transform: none;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
-.card h3 {
-  text-transform: capitalize;
-  color: var(--gold);
-  font-size: 1.5rem;
-}
+  .item-tip {
+    position: static;
+    width: 100%;
+    opacity: 1;
+    margin-top: 0.6rem;
+    pointer-events: auto;
+  }
 
-.product {
-  font-weight: 600;
-  margin-bottom: 0.3rem;
-}
-
-.shade,
-.reason,
-code {
-  color: var(--muted);
-}
-
-code {
-  display: inline-block;
-  margin-top: 0.5rem;
+  .bag-controls {
+    position: static;
+    transform: none;
+    margin: 1.2rem auto 0;
+    padding-bottom: 0.2rem;
+    flex-wrap: wrap;
+  }
 }
