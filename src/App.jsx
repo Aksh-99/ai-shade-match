@@ -154,9 +154,9 @@ function fileToBase64(file) {
 }
 
 async function analyzeSelfie(file) {
-  const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
   if (!apiKey) {
-    throw new Error('Missing VITE_OPENAI_API_KEY. Add it to your environment before analysing.');
+    throw new Error('Missing VITE_GEMINI_API_KEY. Add it to your environment before analysing.');
   }
 
   const base64 = await fileToBase64(file);
@@ -200,40 +200,35 @@ Task:
 
 Use the provided image only. Do not include markdown, comments, or extra text.`;
 
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: 'gpt-4o',
-      messages: [
-        {
-          role: 'user',
-          content: [
-            {
-              type: 'image_url',
-              image_url: { url: `data:${file.type || 'image/jpeg'};base64,${base64}` },
+      contents: [{
+        parts: [
+          {
+            inline_data: {
+              mime_type: file.type || 'image/jpeg',
+              data: base64,
             },
-            {
-              type: 'text',
-              text: prompt,
-            },
-          ],
-        },
-      ],
-      temperature: 0.2,
+          },
+          {
+            text: prompt,
+          },
+        ],
+      }],
     }),
   });
 
   if (!response.ok) {
     const errText = await response.text();
-    throw new Error(`OpenAI API request failed (${response.status}): ${errText}`);
+    throw new Error(`Gemini API request failed (${response.status}): ${errText}`);
   }
 
   const data = await response.json();
-  const content = data?.choices?.[0]?.message?.content;
+  const content = data?.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!content) {
     throw new Error('No model content returned from API.');
   }
