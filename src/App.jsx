@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 const seasonProfiles = {
   'True Spring': { family: 'spring', description: 'Warm, radiant, and naturally clear — your best colours are fresh and sunlit.' },
